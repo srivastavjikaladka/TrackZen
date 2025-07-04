@@ -23,8 +23,11 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url = uri("https://jitpack.io")
+        }
     }
-}
 
-rootProject.name = "TrackZen"
-include(":app")
+    rootProject.name = "TrackZen"
+    include(":app")
+}

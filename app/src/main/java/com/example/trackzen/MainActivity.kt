@@ -12,11 +12,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.trackzen.ui.theme.TrackZenTheme
+import android.util.Log
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        Log.d("Trackzen", "MainActivity launched")
         setContent {
             TrackZenTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
