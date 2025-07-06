@@ -6,6 +6,11 @@ plugins {
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.kotlinKapt)
     alias(libs.plugins.androidxNavigationSafeArgs)
+    alias(libs.plugins.hiltAndroid)
+
+
+
+
 }
 
 
@@ -78,8 +83,7 @@ dependencies {
     implementation(libs.androidx.room.runtime) // If defined in version catalog
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
-    kapt(libs.dagger.compiler)
-    kapt(libs.dagger.android.processor)
+
     kapt(libs.glide.compiler)
 
     // Coroutines
@@ -94,11 +98,14 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:17.0.0")
     implementation("com.google.android.gms:play-services-maps:17.0.0")
 
-    // Dagger (DI)
-    implementation("com.google.dagger:dagger:2.28.1")
-    implementation("com.google.dagger:dagger-android:2.28.1")
-    implementation("com.google.dagger:dagger-android-support:2.28.1")
-    kapt("com.google.dagger:dagger-android-processor:2.28.1")
+    // Dagger (DI) hilt core
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+
+
+
+
+
 
     // Timber (logging)
     implementation("com.jakewharton.timber:timber:4.7.1")
@@ -113,4 +120,7 @@ dependencies {
     // MPAndroidChart
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
+}
+kapt {
+    correctErrorTypes = true
 }

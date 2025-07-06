@@ -13,38 +13,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.trackzen.ui.theme.TrackZenTheme
 import android.util.Log
+import com.example.trackzen.db.RunDao
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var runDao: RunDao
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        Log.d("Trackzen", "MainActivity launched")
+
+
+        Log.d("Trackzen", "RUNDAO: ${runDao.hashCode()}")
         setContent {
             TrackZenTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                Scaffold { padding ->
+                    Text(
+                        modifier = Modifier.padding(padding),
+                        text = "TrackZen is running 🚀")
+
             }
+        }
+
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TrackZenTheme {
-        Greeting("Android")
-    }
-}
