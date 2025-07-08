@@ -90,9 +90,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
 
-    // Navigation (can add to version catalog or use explicit version)
-    implementation("androidx.navigation:navigation-fragment-ktx:2.3.0")
-    implementation("androidx.navigation:navigation-ui-ktx:2.3.0")
+    implementation(libs.navigation.compose) // navigation
+
+
 
     // Google Play Services (Maps & Location)
     implementation("com.google.android.gms:play-services-location:17.0.0")
