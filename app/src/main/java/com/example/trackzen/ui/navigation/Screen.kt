@@ -1,4 +1,4 @@
-package com.example.trackzen.ui.navigation.Screens
+package com.example.trackzen.ui.navigation
 
 sealed class Screen(val route: String) {
     object Run : Screen("run")

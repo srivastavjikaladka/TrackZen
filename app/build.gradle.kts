@@ -78,6 +78,11 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.material.icons.extended)
+    implementation(libs.compose.ui)
+    implementation(libs.material3)
+    implementation(libs.foundation)
+
 
     // Room
     implementation(libs.androidx.room.runtime) // If defined in version catalog

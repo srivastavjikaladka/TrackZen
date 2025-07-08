@@ -1,18 +1,30 @@
 package com.example.trackzen.ui.navigation.Screens
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.navigation.NavController
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
+import com.example.trackzen.ui.navigation.Screen
+
 
 @Composable
 fun RunScreen(navController: NavController) {
-    Text(text = "Run Screen")
-    // Add your run-related UI elements here
-    Button(onClick = { navController.navigate(Screen.Run.route) }) {
-        Text("Go to Run")
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally, // Optional, centers content
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Text(text = "Run Screen 🚴‍♂️")
+        Button(onClick = {
+            navController.navigate(Screen.Tracking.route)
+        }) {
+            Text("Go to Tracking")
+        }
     }
-
-
 }
 
