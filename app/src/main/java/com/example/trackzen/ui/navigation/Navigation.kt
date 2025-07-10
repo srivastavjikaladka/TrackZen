@@ -18,7 +18,7 @@ fun TrackZenNavHost(navController: NavHostController,
                     modifier: Modifier = Modifier
 ) {
     NavHost(navController,
-        startDestination = Screen.Run.route,
+        startDestination = Screen.Setup.route,
         modifier = Modifier
     ) {
         composable(Screen.Run.route) { RunScreen(navController) }

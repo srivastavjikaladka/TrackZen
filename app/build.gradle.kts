@@ -106,11 +106,7 @@ dependencies {
     // Dagger (DI) hilt core
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
-
-
-
-
-
+    implementation(libs.androidx.hilt.navigation.compose)
 
     // Timber (logging)
     implementation("com.jakewharton.timber:timber:4.7.1")

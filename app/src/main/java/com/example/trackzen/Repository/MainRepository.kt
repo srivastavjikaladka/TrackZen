@@ -26,10 +26,4 @@ class MainRepository @Inject constructor(
     fun getRunsBySpeedRange(startDate: Long, endDate: Long) = runDao.getRunsBySpeedRange(startDate, endDate)
 
 
-
-
-
-
-
-
 }

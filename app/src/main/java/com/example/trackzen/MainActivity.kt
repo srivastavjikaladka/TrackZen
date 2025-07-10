@@ -11,6 +11,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.fillMaxSize
 import com.example.trackzen.ui.theme.TrackZenTheme
 import android.util.Log
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,10 +30,14 @@ import com.example.trackzen.db.RunDao
 import com.example.trackzen.ui.navigation.BottomBar
 import com.example.trackzen.ui.navigation.Screen
 import com.example.trackzen.ui.navigation.TrackZenNavHost
+import com.example.trackzen.ui.theme.ThemeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 
+
+
+@OptIn(ExperimentalMaterial3Api::class)
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject
@@ -32,7 +47,9 @@ class MainActivity : ComponentActivity() {
         Log.d("TrackZen", "RUNDAO: ${runDao.hashCode()}")
 
         setContent {
-            TrackZenTheme {
+            val themeViewModel: ThemeViewModel = viewModel()
+            val isDarkTheme by themeViewModel.isDarkTheme.collectAsState()
+            TrackZenTheme(darkTheme = isDarkTheme) {
                 val navController = rememberNavController()
                 enableEdgeToEdge()
                 val currentDestination = navController.currentBackStackEntry?.destination?.route
@@ -40,6 +57,19 @@ class MainActivity : ComponentActivity() {
 
 
                 Scaffold(
+                    topBar = {
+                        TopAppBar(
+                            title = { Text("TrackZen") },
+                            actions = {
+                                IconButton(onClick = { themeViewModel.toggleTheme() }) {
+                                    Icon(
+                                        imageVector = if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
+                                        contentDescription = "Toggle Theme"
+                                    )
+                                }
+                            }
+                        )
+                    },
                     bottomBar = {
                         if (showBottomBar) {
                             BottomBar(navController)
