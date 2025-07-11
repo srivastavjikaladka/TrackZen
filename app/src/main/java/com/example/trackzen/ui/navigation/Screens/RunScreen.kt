@@ -2,6 +2,7 @@ package com.example.trackzen.ui.navigation.Screens
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,12 +17,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DirectionsRun
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,6 +49,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import com.example.trackzen.ui.viewModels.MainViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.trackzen.db.Run
@@ -59,17 +67,90 @@ import kotlin.collections.emptyList
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RunItemCard(run: Run) {
-    Column(
+fun RunItem(run: Run) {
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(12.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF1C1C1E)) // Dark grey background
     ) {
-        Text("Date: ${run.timestamp}")
-        Text("Distance: ${run.distanceInMeters} m")
-        Text("Calories: ${run.caloriesBurned}")
+        Row(
+            modifier = Modifier
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Placeholder icon
+            Icon(
+                imageVector = Icons.Default.DirectionsRun,
+                contentDescription = "Run Icon",
+                modifier = Modifier
+                    .size(60.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(
+                        Brush.linearGradient(
+                            listOf(Color(0xFF00C853), Color(0xFF69F0AE))
+                        )
+                    )
+                    .padding(12.dp),
+                tint = Color.White
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                // Date
+                Text(
+                    text = formatDate(run.timestamp),
+                    color = Color.White,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                // Distance
+                Text(
+                    text = "${run.distanceInMeters / 1000f} Km",
+                    color = Color(0xFF00E676),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                // Duration and Speed
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "${run.timeInMillis / 1000f} min",
+                        color = Color.Gray,
+                        fontSize = 12.sp
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(
+                        text = "${String.format("%.2f", run.avgSpeedInKMH)} min/km",
+                        color = Color.Gray,
+                        fontSize = 12.sp
+                    )
+                }
+            }
+
+            // Calories
+            Text(
+                text = "${run.caloriesBurned} Kcal",
+                color = Color.White,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(start = 8.dp)
+            )
+        }
     }
 }
+
+fun formatDate(timestamp: Long): String {
+    val dateFormat = SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault())
+    return dateFormat.format(Date(timestamp))
+}
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -155,7 +236,7 @@ fun RunScreen(
                 LazyColumn {
 
                     items(runs) { run ->
-                        RunItemCard(run)
+                        RunItem(run)
 
                     }
                 }
