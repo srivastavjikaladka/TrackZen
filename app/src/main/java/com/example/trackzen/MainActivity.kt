@@ -32,6 +32,7 @@ import com.example.trackzen.ui.navigation.Screen
 import com.example.trackzen.ui.navigation.TrackZenNavHost
 import com.example.trackzen.ui.theme.ThemeViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import pub.devrel.easypermissions.EasyPermissions
 import javax.inject.Inject
 
 
@@ -85,6 +86,16 @@ class MainActivity : ComponentActivity() {
 
         }
     }
+    @Suppress("DEPRECATION")
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
+
 
 }
 
