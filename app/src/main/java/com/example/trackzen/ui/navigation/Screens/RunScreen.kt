@@ -110,25 +110,62 @@ fun RunScreen(
 
     val context = LocalContext.current
     val activity = context as? Activity
+
     var hasForegroundPermission by remember { mutableStateOf(false) }
     var hasBackgroundPermission by remember { mutableStateOf(false) }
 
+    var showPermissionDialog by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
+        activity?.let {
+            if (!TrackingUtility.hasForegroundLocationPermission(it)) {
+                TrackingUtility.requestForegroundPermissions(it)
+            }
+        }
+    }
+
+// ✅ Re-check permissions after possible user interaction
+    LaunchedEffect(hasForegroundPermission, hasBackgroundPermission) {
         activity?.let {
             hasForegroundPermission = TrackingUtility.hasForegroundLocationPermission(it)
             hasBackgroundPermission = TrackingUtility.hasBackgroundLocationPermission(it)
-            if (!hasForegroundPermission) {
-                TrackingUtility.requestForegroundPermissions(it)
-            } else if (!hasBackgroundPermission) {
-                TrackingUtility.requestBackgroundPermission(it)
+
+            if (hasForegroundPermission && !hasBackgroundPermission) {
+                showPermissionDialog = true
             }
         }
     }
 
 
-
-
-    if (!hasForegroundPermission || !hasBackgroundPermission) {
+    //  AlertDialog when permission not granted
+    if (showPermissionDialog && (!hasForegroundPermission || !hasBackgroundPermission)) {
+        AlertDialog(
+            onDismissRequest = { showPermissionDialog = false },
+            title = { Text("Permission Required") },
+            text = {
+                Text("TrackZen requires location permissions to track your runs. Please allow access.")
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showPermissionDialog = false
+                    activity?.let {
+                        TrackingUtility.requestBackgroundPermission(it)
+                    }
+                }) {
+                    Text("Grant")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showPermissionDialog = false
+                }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+    //  Block screen if permission still not granted
+    if (!hasForegroundPermission) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -138,27 +175,23 @@ fun RunScreen(
         ) {
             Text(
                 "Location permissions are required to track your runs.",
-                 color = Color.White
+                color = Color.White
             )
-            Spacer(
-                modifier = Modifier.height(16.dp)
-            )
+            Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                activity?.let {
-                    if (!hasForegroundPermission) {
+                    activity?.let {
                         TrackingUtility.requestForegroundPermissions(it)
-                    } else if (!hasBackgroundPermission) {
-                        TrackingUtility.requestBackgroundPermission(it)
+                        hasForegroundPermission = TrackingUtility.hasForegroundLocationPermission(it)
                     }
                 }
-            }) {
+            ) {
                 Text("Grant Permissions")
             }
         }
-
         return@RunScreen
     }
+
 
 
 
