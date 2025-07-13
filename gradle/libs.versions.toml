@@ -25,6 +25,11 @@ materialIconsExtended = "1.6.1"
 compose-ui = "1.6.1"
 material3 = "1.2.1"
 hiltNavigationCompose = "1.2.0"
+maps_compose = "2.11.4"
+play_services_maps = "18.1.0"
+play_services_location = "21.0.1"
+location = "21.0.1"
+accompanist = "0.34.0"
 
 
 
@@ -52,6 +57,11 @@ foundation = { module = "androidx.compose.foundation:foundation", version = "1.6
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version = "2.7.7" }
 material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 
+#accompanist for aniimation
+
+accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
+accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist"}
+
 # Room
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
@@ -74,8 +84,11 @@ glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = 
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 # Google Play Services
-play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServices" }
-play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServices" }
+# ✅ VALID - use underscore or camelCase instead
+play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "play_services_maps" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "play_services_location" }
+play-services-base = { group = "com.google.android.gms", name = "play-services-base", version = "18.4.0" }
+mapsCompose = { module = "com.google.maps.android:maps-compose", version.ref = "maps_compose" }
 
 # EasyPermissions
 easypermissions = { module = "pub.devrel:easypermissions", version.ref = "easypermissions" }

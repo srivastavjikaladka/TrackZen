@@ -7,6 +7,10 @@ import android.os.Build
 import pub.devrel.easypermissions.EasyPermissions
 
 object TrackingUtility {
+    fun isGpsEnabled(context: Context): Boolean {
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as android.location.LocationManager
+        return locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)
+    }
 
     fun hasForegroundLocationPermission(context: Context): Boolean {
         return EasyPermissions.hasPermissions(

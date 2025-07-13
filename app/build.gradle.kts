@@ -97,11 +97,18 @@ dependencies {
 
     implementation(libs.navigation.compose) // navigation
 
+    implementation(libs.accompanist.permissions)
+    implementation(libs.accompanist.systemuicontroller)
+
+
 
 
     // Google Play Services (Maps & Location)
-    implementation("com.google.android.gms:play-services-location:17.0.0")
-    implementation("com.google.android.gms:play-services-maps:17.0.0")
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
+    implementation(libs.play.services.base)
+    implementation(libs.mapsCompose)
+
 
     // Dagger (DI) hilt core
     implementation(libs.hilt.android)

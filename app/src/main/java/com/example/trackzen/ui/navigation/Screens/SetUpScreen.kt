@@ -124,7 +124,7 @@ fun SetUpScreen(navController: NavController) {
 
         Button(
             onClick = {
-                navController.navigate(Screen.Run.route, builder = {
+                navController.navigate(Screen.Start.route, builder = {
                     popUpTo(Screen.Setup.route) {
                         inclusive = true
                     }
