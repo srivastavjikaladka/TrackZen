@@ -22,7 +22,8 @@ object AppModule {
         @ApplicationContext app: Context
     ) = Room.databaseBuilder(
         app, RunningDatabase::class.java, RUNNING_DATABASE_NAME
-    ).build()
+    ).fallbackToDestructiveMigration()
+        .build()
 
     @Singleton
     @Provides

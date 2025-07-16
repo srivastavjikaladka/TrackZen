@@ -32,10 +32,12 @@ import androidx.navigation.NavController
 import com.example.trackzen.other.TrackingUtility
 import com.example.trackzen.ui.navigation.Screen
 
+
 @Composable
 fun StartScreen(
     navController: NavController
 ) {
+
     val context = LocalContext.current
     val activity = context as Activity
 
@@ -75,7 +77,8 @@ fun StartScreen(
                     ),
                     shape = CircleShape
                 )
-                .clickable {
+
+            .clickable {
                     if (!TrackingUtility.hasForegroundLocationPermission(context)) {
                         TrackingUtility.requestForegroundPermissions(activity)
                     } else {
@@ -83,6 +86,7 @@ fun StartScreen(
                         if (!isGpsEnabled) {
                             showGpsDialog = true
                         } else {
+
                             navController.navigate(Screen.Tracking.route)
                         }
                     }

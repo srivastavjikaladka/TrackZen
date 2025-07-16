@@ -29,9 +29,9 @@ class MainViewModel @Inject constructor(
             val run = Run(
                 timestamp = System.currentTimeMillis(),
                 avgSpeedInKMH = 10f,
-                distanceInMeters = 1500,
+                distanceInMeters = 1500f,
                 timeInMillis = 900000,
-                caloriesBurned = 120,
+                caloriesBurned = 120f,
 
                 )
             mainRepository.insertRun(run)

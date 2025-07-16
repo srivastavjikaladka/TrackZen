@@ -4,6 +4,7 @@ import android.location.Location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.trackzen.Repository.MainRepository
+import com.example.trackzen.db.Run
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -32,6 +33,10 @@ class TrackingViewModel @Inject constructor(
 
     private val _avgSpeedInKmh = MutableStateFlow(0f)
     val avgSpeedInKmh: StateFlow<Float> = _avgSpeedInKmh
+
+    private val _runStats = MutableStateFlow<Run?>(null)
+    val runStats: StateFlow<Run?> = _runStats
+
 
     private var timerJob: Job? = null
     private var startTime = 0L
@@ -80,4 +85,22 @@ class TrackingViewModel @Inject constructor(
         val hours = (ms / 1000) / 3600
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
+    fun finishRun() {
+        stopTracking() // stop the timer
+
+        val run = Run(
+            timestamp = System.currentTimeMillis(),
+            avgSpeedInKMH = avgSpeedInKmh.value,
+            distanceInMeters = distanceRunInMeters.value,
+            timeInMillis = timeRunInMillis.value,
+            caloriesBurned = caloriesBurned.value,
+
+        )
+
+        viewModelScope.launch {
+            repository.insertRun(run)
+            _runStats.value = run
+        }
+    }
+
 }
