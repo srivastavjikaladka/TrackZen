@@ -109,6 +109,9 @@ dependencies {
     implementation(libs.play.services.base)
     implementation(libs.mapsCompose)
 
+    // Location and lifecycle services
+    implementation("androidx.lifecycle:lifecycle-service:2.6.2")
+
 
     // Dagger (DI) hilt core
     implementation(libs.hilt.android)

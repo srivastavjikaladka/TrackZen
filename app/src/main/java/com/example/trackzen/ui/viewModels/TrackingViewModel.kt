@@ -1,9 +1,13 @@
 package com.example.trackzen.ui.viewModels
 
+import android.app.Application
+import android.content.Intent
 import android.location.Location
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.trackzen.Repository.MainRepository
+import com.example.trackzen.Service.TrackingService
 import com.example.trackzen.db.Run
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -15,8 +19,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TrackingViewModel @Inject constructor(
+    application: Application,
     private val repository : MainRepository
-) : ViewModel() {
+) : AndroidViewModel(application) {
 
 
     private val _currentLocation = MutableStateFlow<Location?>(null)
@@ -102,5 +107,14 @@ class TrackingViewModel @Inject constructor(
             _runStats.value = run
         }
     }
+
+    //called in tracking screen afteer thec ontdown ends
+    fun sendCommandToService(action: String) {
+        val intent = Intent(getApplication(), TrackingService::class.java).apply {
+            this.action = action
+        }
+        getApplication<Application>().startService(intent)
+    }
+
 
 }

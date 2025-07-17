@@ -8,7 +8,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,7 +27,7 @@ fun TrackingScreen(
     navController: NavController,
     viewModel: TrackingViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
+
     val showDialog = remember { mutableStateOf(false) }
 
     var countdownNumber by remember { mutableStateOf(3) }
@@ -43,6 +42,11 @@ fun TrackingScreen(
         countdownNumber = 0
         delay(500)
         isCountingDown = false
+
+        //Start foreground service
+        viewModel.sendCommandToService("ACTION_START_OR_RESUME_SERVICE")
+
+        //Begin internal ViewModel tracking logic
         viewModel.startTracking()
     }
 
@@ -212,3 +216,15 @@ fun StatCard(title: String, value: String, cardColor: Color, valueColor: Color, 
         }
     }
 }
+
+//User presses "Start Run"
+//   ↓
+//TrackingScreen → tells TrackingViewModel → sends intent to TrackingService
+//   ↓
+//TrackingService starts collecting location updates (via FusedLocationProvider)
+//   ↓
+//Service posts updates to a MutableLiveData<List<Location>>
+//   ↓
+//TrackingViewModel observes that LiveData
+//   ↓
+//TrackingScreen uses state to update map, distance, duration, etc.

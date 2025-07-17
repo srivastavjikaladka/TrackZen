@@ -30,6 +30,7 @@ play_services_maps = "18.1.0"
 play_services_location = "21.0.1"
 location = "21.0.1"
 accompanist = "0.34.0"
+lifecycle-service = "2.6.2"
 
 
 
@@ -53,6 +54,9 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose-ui" }
 material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 foundation = { module = "androidx.compose.foundation:foundation", version = "1.6.1" }
+
+#lifecycle services
+lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "lifecycle-service" }
 # navigation
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version = "2.7.7" }
 material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
