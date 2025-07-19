@@ -21,12 +21,22 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
 import kotlinx.coroutines.delay
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.LocalContext
+import com.example.trackzen.Service.TrackingService.Companion.isTracking
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun TrackingScreen(
     navController: NavController,
     viewModel: TrackingViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.registerTrackingReceiver(context)
+    }
+
 
     val showDialog = remember { mutableStateOf(false) }
 
@@ -49,6 +59,8 @@ fun TrackingScreen(
         //Begin internal ViewModel tracking logic
         viewModel.startTracking()
     }
+
+
 
     val locationPermissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
     LaunchedEffect(Unit) {
@@ -153,6 +165,20 @@ fun TrackingScreen(
                         )
                     }
                 }
+
+
+                val isTracking by viewModel.isTracking.collectAsState()
+
+                PauseResumeButton(
+                    isTracking = isTracking,
+                    onPause = {
+                        viewModel.sendCommandToService("ACTION_PAUSE_SERVICE")
+                    },
+                    onResume = {
+                        viewModel.sendCommandToService("ACTION_START_OR_RESUME_SERVICE")
+                    }
+                )
+
             }
 
             // Countdown overlay
@@ -199,6 +225,7 @@ fun TrackingScreen(
 }
 
 
+
 @Composable
 fun StatCard(title: String, value: String, cardColor: Color, valueColor: Color, modifier: Modifier = Modifier) {
     Card(
@@ -216,15 +243,31 @@ fun StatCard(title: String, value: String, cardColor: Color, valueColor: Color, 
         }
     }
 }
+@Composable
+fun PauseResumeButton(
+    isTracking: Boolean,
+    modifier: Modifier = Modifier,
+    onPause: () -> Unit,
+    onResume: () -> Unit
+) {
+    Button(
+        onClick = { if (isTracking) onPause() else onResume() },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (isTracking) Color.Yellow else Color.Green,
+            contentColor = Color.Black
+        ),
+        modifier = modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
+            .height(56.dp)
+    ) {
+        Text(
+            text = if (isTracking) "Pause" else "Resume",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
 
-//User presses "Start Run"
-//   ↓
-//TrackingScreen → tells TrackingViewModel → sends intent to TrackingService
-//   ↓
-//TrackingService starts collecting location updates (via FusedLocationProvider)
-//   ↓
-//Service posts updates to a MutableLiveData<List<Location>>
-//   ↓
-//TrackingViewModel observes that LiveData
-//   ↓
-//TrackingScreen uses state to update map, distance, duration, etc.
+
+

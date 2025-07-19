@@ -31,6 +31,7 @@ play_services_location = "21.0.1"
 location = "21.0.1"
 accompanist = "0.34.0"
 lifecycle-service = "2.6.2"
+runtimeLivedata = "1.8.3"
 
 
 
@@ -99,6 +100,7 @@ easypermissions = { module = "pub.devrel:easypermissions", version.ref = "easype
 
 # MPAndroidChart
 mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchart" }
+androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 
 
 [plugins]

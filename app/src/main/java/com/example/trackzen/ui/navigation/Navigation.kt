@@ -30,5 +30,6 @@ fun TrackZenNavHost(navController: NavHostController,
         composable(Screen.Settings.route) { SettingsScreen(navController) }
         composable(Screen.Setup.route) { SetUpScreen(navController) }
         composable(Screen.RunSummary.route) { RunSummaryScreen(navController) }
+
     }
 }

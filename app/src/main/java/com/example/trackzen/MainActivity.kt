@@ -1,5 +1,6 @@
 package com.example.trackzen
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -27,6 +28,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.trackzen.db.RunDao
+import com.example.trackzen.other.Constants.ACTION_SHOW_TRACKING_SCREEN
 import com.example.trackzen.ui.navigation.BottomBar
 import com.example.trackzen.ui.navigation.Screen
 import com.example.trackzen.ui.navigation.TrackZenNavHost
@@ -50,8 +52,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             val themeViewModel: ThemeViewModel = viewModel()
             val isDarkTheme by themeViewModel.isDarkTheme.collectAsState()
+            val navController: NavHostController = rememberNavController()
             TrackZenTheme(darkTheme = isDarkTheme) {
-                val navController = rememberNavController()
                 enableEdgeToEdge()
                 val currentDestination = navController.currentBackStackEntry?.destination?.route
                 val showBottomBar = currentDestination != Screen.Setup.route
@@ -86,6 +88,21 @@ class MainActivity : ComponentActivity() {
 
         }
     }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+    }
+
+    private fun navigateToTrackingScreenIfNeeded(
+        intent: Intent?, navController: NavHostController) {
+        if (intent?.action == ACTION_SHOW_TRACKING_SCREEN) {
+            navController.navigate(Screen.Tracking.route) {
+                popUpTo("run_screen") { inclusive = false }
+            }
+        }
+    }
+
     @Suppress("DEPRECATION")
     override fun onRequestPermissionsResult(
         requestCode: Int,

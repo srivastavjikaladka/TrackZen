@@ -1,14 +1,21 @@
 package com.example.trackzen.ui.viewModels
 
 import android.app.Application
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.location.Location
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.trackzen.Repository.MainRepository
 import com.example.trackzen.Service.TrackingService
 import com.example.trackzen.db.Run
+import com.example.trackzen.db.RunDao
+import com.example.trackzen.other.Constants
+import com.example.trackzen.other.Constants.ACTION_STOP_SERVICE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -91,30 +98,52 @@ class TrackingViewModel @Inject constructor(
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
     fun finishRun() {
-        stopTracking() // stop the timer
 
-        val run = Run(
-            timestamp = System.currentTimeMillis(),
-            avgSpeedInKMH = avgSpeedInKmh.value,
-            distanceInMeters = distanceRunInMeters.value,
-            timeInMillis = timeRunInMillis.value,
-            caloriesBurned = caloriesBurned.value,
+        sendCommandToService(ACTION_STOP_SERVICE)
 
-        )
-
+        // Save run data to Room
         viewModelScope.launch {
+            val run = Run(
+                timestamp = System.currentTimeMillis(),
+                avgSpeedInKMH = avgSpeedInKmh.value ?: 0f,
+                distanceInMeters = distanceRunInMeters.value ?: 0f,
+                timeInMillis = timeRunInMillis.value ?: 0L,
+                caloriesBurned = caloriesBurned.value ?: 0f
+            )
+
             repository.insertRun(run)
-            _runStats.value = run
         }
     }
 
+
     //called in tracking screen afteer thec ontdown ends
+    private val _isTracking = MutableStateFlow(false)
+    val isTracking: StateFlow<Boolean> = _isTracking
+
+    fun registerTrackingReceiver(context: Context) {
+        val intentFilter = IntentFilter("com.example.trackzen.TRACKING_STATUS_UPDATE")
+
+        val trackingReceiver = object : BroadcastReceiver() {
+            override fun onReceive(ctx: Context?, intent: Intent?) {
+                intent?.let {
+                    if (it.hasExtra("isTracking")) {
+                        _isTracking.value = it.getBooleanExtra("isTracking", false)
+                    }
+                }
+            }
+        }
+        context.registerReceiver(trackingReceiver, intentFilter)
+    }
+
+
+
     fun sendCommandToService(action: String) {
         val intent = Intent(getApplication(), TrackingService::class.java).apply {
             this.action = action
         }
         getApplication<Application>().startService(intent)
     }
+
 
 
 }
