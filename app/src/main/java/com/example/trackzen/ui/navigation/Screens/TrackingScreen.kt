@@ -13,6 +13,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.trackzen.db.Run
+import com.example.trackzen.other.Constants.POLYLINE_COLOR
+import com.example.trackzen.other.Constants.POLYLINE_WIDTH
+import com.example.trackzen.other.Constants.MAP_ZOOM
+import com.example.trackzen.other.TrackingUtility
 import com.example.trackzen.ui.navigation.Screen
 import com.example.trackzen.ui.viewModels.TrackingViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -21,9 +26,9 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
 import kotlinx.coroutines.delay
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
-import com.example.trackzen.Service.TrackingService.Companion.isTracking
+import androidx.compose.runtime.livedata.observeAsState
+import java.util.*
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -32,14 +37,13 @@ fun TrackingScreen(
     viewModel: TrackingViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    val pathPoints by viewModel.pathPoints.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.registerTrackingReceiver(context)
     }
 
-
     val showDialog = remember { mutableStateOf(false) }
-
     var countdownNumber by remember { mutableStateOf(3) }
     var isCountingDown by remember { mutableStateOf(true) }
 
@@ -53,14 +57,9 @@ fun TrackingScreen(
         delay(500)
         isCountingDown = false
 
-        //Start foreground service
-        viewModel.sendCommandToService("ACTION_START_OR_RESUME_SERVICE")
-
-        //Begin internal ViewModel tracking logic
+        // Start foreground service
         viewModel.startTracking()
     }
-
-
 
     val locationPermissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
     LaunchedEffect(Unit) {
@@ -72,16 +71,25 @@ fun TrackingScreen(
     val distanceRunInMeters by viewModel.distanceRunInMeters.collectAsState()
     val caloriesBurned by viewModel.caloriesBurned.collectAsState()
     val avgSpeedInKmh by viewModel.avgSpeedInKmh.collectAsState()
+    val isTracking by viewModel.isTracking.collectAsState()
 
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(LatLng(28.6139, 77.2090), 12f)
+        position = CameraPosition.fromLatLngZoom(LatLng(28.6139, 77.2090), MAP_ZOOM)
+    }
+
+    // Update camera position when location changes
+    LaunchedEffect(locationState) {
+        locationState?.let { location ->
+            val newPosition = LatLng(location.latitude, location.longitude)
+            cameraPositionState.position = CameraPosition.fromLatLngZoom(newPosition, MAP_ZOOM)
+        }
     }
 
     Scaffold(
         containerColor = Color.Black,
         floatingActionButton = {
             if (!isCountingDown) {
-                Box(modifier = Modifier.padding(bottom = 56.dp)) { // Adjust this value as needed
+                Box(modifier = Modifier.padding(bottom = 56.dp)) {
                     FloatingActionButton(
                         onClick = { showDialog.value = true },
                         containerColor = Color(0xFFEF5350)
@@ -115,11 +123,23 @@ fun TrackingScreen(
                         properties = MapProperties(isMyLocationEnabled = true),
                         uiSettings = MapUiSettings(myLocationButtonEnabled = true)
                     ) {
-                        locationState?.let {
+                        // Draw current location marker
+                        locationState?.let { location ->
                             Marker(
-                                state = MarkerState(LatLng(it.latitude, it.longitude)),
-                                title = "You"
+                                state = MarkerState(LatLng(location.latitude, location.longitude)),
+                                title = "Current Location"
                             )
+                        }
+
+                        // Draw polylines for the path
+                        for (polyline in pathPoints) {
+                            if (polyline.size > 1) {
+                                Polyline(
+                                    points = polyline,
+                                    color = Color(POLYLINE_COLOR.toInt()),
+                                    width = POLYLINE_WIDTH
+                                )
+                            }
                         }
                     }
                 }
@@ -166,19 +186,16 @@ fun TrackingScreen(
                     }
                 }
 
-
-                val isTracking by viewModel.isTracking.collectAsState()
-
+                // Pause/Resume button
                 PauseResumeButton(
                     isTracking = isTracking,
                     onPause = {
-                        viewModel.sendCommandToService("ACTION_PAUSE_SERVICE")
+                        viewModel.pauseTracking()
                     },
                     onResume = {
-                        viewModel.sendCommandToService("ACTION_START_OR_RESUME_SERVICE")
+                        viewModel.startTracking()
                     }
                 )
-
             }
 
             // Countdown overlay
@@ -207,6 +224,18 @@ fun TrackingScreen(
                     confirmButton = {
                         TextButton(onClick = {
                             showDialog.value = false
+
+                            // Create run object to save
+                            val run = Run(
+                                img = null,
+                                timestamp = Calendar.getInstance().timeInMillis,
+                                avgSpeedInKMH = avgSpeedInKmh,
+                                distanceInMeters = distanceRunInMeters.toFloat(),
+                                timeInMillis = timeRunInMillis,
+                                caloriesBurned = caloriesBurned.toFloat()
+                            )
+
+                            viewModel.insertRun(run)
                             viewModel.finishRun()
                             navController.navigate(Screen.RunSummary.route)
                         }) {
@@ -223,8 +252,6 @@ fun TrackingScreen(
         }
     }
 }
-
-
 
 @Composable
 fun StatCard(title: String, value: String, cardColor: Color, valueColor: Color, modifier: Modifier = Modifier) {
@@ -243,6 +270,7 @@ fun StatCard(title: String, value: String, cardColor: Color, valueColor: Color, 
         }
     }
 }
+
 @Composable
 fun PauseResumeButton(
     isTracking: Boolean,
@@ -268,6 +296,3 @@ fun PauseResumeButton(
         )
     }
 }
-
-
-

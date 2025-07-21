@@ -1,29 +1,41 @@
-
 package com.example.trackzen.Repository
 
 import com.example.trackzen.db.Run
 import com.example.trackzen.db.RunDao
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
 class MainRepository @Inject constructor(
     private val runDao: RunDao
-){
+) {
+
     suspend fun insertRun(run: Run) = runDao.insertRun(run)
+
     suspend fun deleteRun(run: Run) = runDao.deleteRun(run)
+
     fun getAllRunsSortedByDate() = runDao.getAllRunsSortedByDate()
-    fun getAllRunsSortedByDistance() = runDao.getAllRunsSortedBydistanceInMeters()
-    fun getAllRunsSortedByTimeInMillis() = runDao.getAllRunsSortedBytimeinMillis()
-    fun getAllRunsSortedByAvgSpeed() = runDao.getAllRunsSortedByavgSpeedInKMH()
-    fun getAllRunsSortedByCaloriesBurned() = runDao.getAllRunsSortedBycaloriesBurned()
-    fun getTotalAvgSpeed() = runDao.getTotalAvgSpeedInKMH()
-    fun getTotalDistance() = runDao.getTotalDistanceInMeters()
+
+    fun getAllRunsSortedByTimeInMillis() = runDao.getAllRunsSortedByTimeInMillis()
+
+    fun getAllRunsSortedByCaloriesBurned() = runDao.getAllRunsSortedByCaloriesBurned()
+
+    fun getAllRunsSortedByAvgSpeed() = runDao.getAllRunsSortedByAvgSpeed()
+
+    fun getAllRunsSortedByDistance() = runDao.getAllRunsSortedByDistance()
+
+    fun getTotalAvgSpeed() = runDao.getTotalAvgSpeed()
+
+    fun getTotalDistance() = runDao.getTotalDistance()
+
     fun getTotalCaloriesBurned() = runDao.getTotalCaloriesBurned()
+
     fun getTotalTimeInMillis() = runDao.getTotalTimeInMillis()
-    fun getRunsByDateRange(startDate: Long, endDate: Long) = runDao.getRunsByDateRange(startDate, endDate)
-    fun getRunsByTimeInMillisRange(startDate: Long, endDate: Long) = runDao.getRunsByTimeInMillisRange(startDate, endDate)
-    fun getRunsByAvgSpeedRange(startDate: Long, endDate: Long) = runDao.getRunsByAvgSpeedInKMHRange(startDate, endDate)
-    fun getRunsByDistanceRange(startDate: Long, endDate: Long) = runDao.getRunsByDistanceInMetersRange(startDate, endDate)
-    fun getRunsByCaloriesBurnedRange(startDate: Long, endDate: Long) = runDao.getRunsByCaloriesBurnedRange(startDate, endDate)
-    fun getRunsBySpeedRange(startDate: Long, endDate: Long) = runDao.getRunsBySpeedRange(startDate, endDate)
 
-
+    // Mock user weight - in a real app, this would come from SharedPreferences or user settings
+    val userWeight: Flow<Float> = flow {
+        emit(70.0f) // Default weight in kg
+    }
 }
