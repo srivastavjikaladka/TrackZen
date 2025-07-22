@@ -7,16 +7,17 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "running_table")
 
 data class Run(
-    var img: Bitmap? = null,
-    var timestamp: Long = 0L,
-    var avgSpeedInKMH: Float = 0f,
-    var distanceInMeters: Float = 0f,
-    var timeInMillis: Long = 0L,
-    var caloriesBurned: Float = 0f
+    val img: Bitmap? = null,
+    val timestamp: Long = 0L,
+    val avgSpeedInKMH: Float = 0f,
+    val distanceInMeters: Float = 0f,
+    val timeInMillis: Long = 0L,
+    val caloriesBurned: Float = 0f
+
 
 ) {
     @PrimaryKey(autoGenerate = true)
-    var id: Int? = null
+    var id :Int?=null
 
 
 }

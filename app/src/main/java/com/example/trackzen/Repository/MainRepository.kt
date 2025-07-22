@@ -18,24 +18,23 @@ class MainRepository @Inject constructor(
 
     fun getAllRunsSortedByDate() = runDao.getAllRunsSortedByDate()
 
-    fun getAllRunsSortedByTimeInMillis() = runDao.getAllRunsSortedByTimeInMillis()
+    fun getAllRunsSortedByTimeInMillis() = runDao.getAllRunsSortedBytimeinMillis()
 
-    fun getAllRunsSortedByCaloriesBurned() = runDao.getAllRunsSortedByCaloriesBurned()
+    fun getAllRunsSortedByCaloriesBurned() = runDao.getAllRunsSortedBycaloriesBurned()
 
-    fun getAllRunsSortedByAvgSpeed() = runDao.getAllRunsSortedByAvgSpeed()
+    fun getAllRunsSortedByAvgSpeed() = runDao.getAllRunsSortedByavgSpeedInKMH()
 
-    fun getAllRunsSortedByDistance() = runDao.getAllRunsSortedByDistance()
+    fun getAllRunsSortedByDistance() = runDao.getAllRunsSortedBydistanceInMeters()
 
-    fun getTotalAvgSpeed() = runDao.getTotalAvgSpeed()
+    fun getTotalAvgSpeed() = runDao.getTotalAvgSpeedInKMH()
 
-    fun getTotalDistance() = runDao.getTotalDistance()
+    fun getTotalDistance() = runDao.getTotalDistanceInMeters()
 
     fun getTotalCaloriesBurned() = runDao.getTotalCaloriesBurned()
 
     fun getTotalTimeInMillis() = runDao.getTotalTimeInMillis()
 
-    // Mock user weight - in a real app, this would come from SharedPreferences or user settings
     val userWeight: Flow<Float> = flow {
-        emit(70.0f) // Default weight in kg
+        emit(70.0f)
     }
 }
